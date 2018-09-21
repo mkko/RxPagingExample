@@ -25,6 +25,7 @@
 		2B993A8F214EEE7E00C587C0 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A8E214EEE7D00C587C0 /* Reachability.swift */; };
 		2B993A91214EEE8300C587C0 /* ReachabilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A90214EEE8300C587C0 /* ReachabilityService.swift */; };
 		2B993A93214EEEA400C587C0 /* Dependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A92214EEEA400C587C0 /* Dependencies.swift */; };
+		2B9B59E3215542EE00E8F35F /* ActivityIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9B59E2215542EE00E8F35F /* ActivityIndicator.swift */; };
 		EC51860A3A0AE18B6BEB8C3C /* Pods_RxPagingExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4524C3DA72599B3CE1C4BE2A /* Pods_RxPagingExample.framework */; };
 /* End PBXBuildFile section */
 
@@ -49,6 +50,7 @@
 		2B993A8E214EEE7D00C587C0 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		2B993A90214EEE8300C587C0 /* ReachabilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReachabilityService.swift; sourceTree = "<group>"; };
 		2B993A92214EEEA400C587C0 /* Dependencies.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dependencies.swift; sourceTree = "<group>"; };
+		2B9B59E2215542EE00E8F35F /* ActivityIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivityIndicator.swift; sourceTree = "<group>"; };
 		4524C3DA72599B3CE1C4BE2A /* Pods_RxPagingExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RxPagingExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50C09B332BF6B0B4391A75E0 /* Pods-RxPagingExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RxPagingExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-RxPagingExample/Pods-RxPagingExample.release.xcconfig"; sourceTree = "<group>"; };
 		665D3D80C0476DC963806E6A /* Pods-RxPagingExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RxPagingExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RxPagingExample/Pods-RxPagingExample.debug.xcconfig"; sourceTree = "<group>"; };
@@ -114,6 +116,7 @@
 				2B993A8A214EECE000C587C0 /* String+URL.swift */,
 				2B993A8E214EEE7D00C587C0 /* Reachability.swift */,
 				2B993A90214EEE8300C587C0 /* ReachabilityService.swift */,
+				2B9B59E2215542EE00E8F35F /* ActivityIndicator.swift */,
 			);
 			path = GitHubSearchRepositories;
 			sourceTree = "<group>";
@@ -255,6 +258,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B993A93214EEEA400C587C0 /* Dependencies.swift in Sources */,
+				2B9B59E3215542EE00E8F35F /* ActivityIndicator.swift in Sources */,
 				2B993A8B214EECE000C587C0 /* String+URL.swift in Sources */,
 				2B993A89214EECAE00C587C0 /* Result.swift in Sources */,
 				2B993A8F214EEE7E00C587C0 /* Reachability.swift in Sources */,

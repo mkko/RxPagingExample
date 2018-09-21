@@ -85,22 +85,25 @@ extension GithubQuery: Equatable {
  */
 func githubSearchRepositories(
     searchText: Signal<String>,
-    loadNextPageTrigger: @escaping (Observable<GitHubSearchRepositoriesState>) -> Signal<()>,
+    loadNextPageTrigger: @escaping (Driver<GitHubSearchRepositoriesState>) -> Signal<()>,
     performSearch: @escaping (URL) -> Observable<SearchRepositoriesResponse>
     ) -> Driver<GitHubSearchRepositoriesState> {
 
     let scheduler = MainScheduler()
     let replaySubject = ReplaySubject<GitHubSearchRepositoriesState>.create(bufferSize: 1)
 
-    let searchPerformerFeedback: (Observable<GitHubSearchRepositoriesState>) -> Signal<GitHubCommand> = { state in
+    let searchPerformerFeedback: (Driver<GitHubSearchRepositoriesState>) -> Signal<GitHubCommand> = { state in
 
-        return state.map{ state in
+        return state.asObservable().map{ state in
             GithubQuery(searchText: state.searchText, shouldLoadNextPage: state.shouldLoadNextPage, nextURL: state.nextURL)
             }
             .distinctUntilChanged()
-            .flatMapLatest { query -> Observable<GitHubCommand> in
+            .flatMapLatest { (query: GithubQuery?) -> Observable<GitHubCommand> in
+                guard let query = query else {
+                    return Observable<GitHubCommand>.empty()
+                }
 
-                let effects = { (query: GithubQuery) -> Signal<GitHubCommand> in
+                let effects: (GithubQuery) -> Signal<GitHubCommand> = { query in
                     if !query.shouldLoadNextPage {
                         return Signal.empty()
                     }
@@ -131,7 +134,7 @@ func githubSearchRepositories(
     }
 
     // this is degenerated feedback loop that doesn't depend on output state
-    let inputFeedbackLoop: (Observable<GitHubSearchRepositoriesState>) -> Signal<GitHubCommand> = { state in
+    let inputFeedbackLoop: (Driver<GitHubSearchRepositoriesState>) -> Signal<GitHubCommand> = { state in
         let loadNextPage = loadNextPageTrigger(state).map { _ in GitHubCommand.loadMoreItems }
         let searchText = searchText.map(GitHubCommand.changeSearch)
 
@@ -146,7 +149,7 @@ func githubSearchRepositories(
     let feedbacks = [searchPerformerFeedback, inputFeedbackLoop]
 
     let observableFeedbacks = feedbacks.map { f -> Observable<GitHubCommand> in
-        return f(replaySubject.asObservable()).asObservable()
+        return f(replaySubject.asDriver(onErrorDriveWith: Driver<GitHubSearchRepositoriesState>.empty())).asObservable()
     }
 
     return Observable.merge(observableFeedbacks)

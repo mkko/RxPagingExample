@@ -9,6 +9,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import RxDataSources
 
 extension UIScrollView {
     func  isNearBottomEdge(edgeOffset: CGFloat = 20.0) -> Bool {
@@ -18,6 +19,8 @@ extension UIScrollView {
 
 class GitHubSearchRepositoriesViewController: ViewController, UITableViewDelegate {
     static let startLoadingOffset: CGFloat = 20.0
+
+    private let disposeBag = DisposeBag()
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -46,7 +49,7 @@ class GitHubSearchRepositoriesViewController: ViewController, UITableViewDelegat
                     return tableView.isNearBottomEdge(edgeOffset: 20.0) && !state.shouldLoadNextPage
                         ? Signal.just(())
                         : Signal.empty()
-                }
+            }
         }
 
         let activityIndicator = ActivityIndicator()
