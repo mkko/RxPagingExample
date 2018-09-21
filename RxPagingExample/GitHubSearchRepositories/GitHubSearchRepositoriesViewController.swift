@@ -65,11 +65,6 @@ class GitHubSearchRepositoriesViewController: ViewController, UITableViewDelegat
             })
 
         state
-            .map { $0.isOffline }
-            .drive(navigationController!.rx.isOffline)
-            .disposed(by: disposeBag)
-
-        state
             .map { $0.repositories }
             .distinctUntilChanged()
             .map { [SectionModel(model: "Repositories", items: $0.value)] }
