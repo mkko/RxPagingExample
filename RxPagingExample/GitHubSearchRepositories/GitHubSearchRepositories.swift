@@ -79,39 +79,59 @@ extension GithubQuery: Equatable {
  This method contains the gist of paginated GitHub search.
  
  */
+/**
+ This method contains the gist of paginated GitHub search.
+
+ */
 func githubSearchRepositories(
-        searchText: Signal<String>,
-        loadNextPageTrigger: @escaping (Driver<GitHubSearchRepositoriesState>) -> Signal<()>,
-        performSearch: @escaping (URL) -> Observable<SearchRepositoriesResponse>
+    searchText: Signal<String>,
+    loadNextPageTrigger: @escaping (Observable<GitHubSearchRepositoriesState>) -> Signal<()>,
+    performSearch: @escaping (URL) -> Observable<SearchRepositoriesResponse>
     ) -> Driver<GitHubSearchRepositoriesState> {
 
+    let scheduler = MainScheduler()
+    let replaySubject = ReplaySubject<GitHubSearchRepositoriesState>.create(bufferSize: 1)
 
+    let searchPerformerFeedback: (Observable<GitHubSearchRepositoriesState>) -> Signal<GitHubCommand> = { state in
 
-    let searchPerformerFeedback: (Driver<GitHubSearchRepositoriesState>) -> Signal<GitHubCommand> = react(
-        query: { (state) in
+        return state.map{ state in
             GithubQuery(searchText: state.searchText, shouldLoadNextPage: state.shouldLoadNextPage, nextURL: state.nextURL)
-        },
-        effects: { query -> Signal<GitHubCommand> in
-                if !query.shouldLoadNextPage {
-                    return Signal.empty()
-                }
-
-                if query.searchText.isEmpty {
-                    return Signal.just(GitHubCommand.gitHubResponseReceived(.success((repositories: [], nextURL: nil))))
-                }
-
-                guard let nextURL = query.nextURL else {
-                    return Signal.empty()
-                }
-
-                return performSearch(nextURL)
-                    .asSignal(onErrorJustReturn: .failure(GitHubServiceError.networkError))
-                    .map(GitHubCommand.gitHubResponseReceived)
             }
-    )
+            .distinctUntilChanged()
+            .flatMapLatest { query -> Observable<GitHubCommand> in
+
+                let effects = { (query: GithubQuery) -> Signal<GitHubCommand> in
+                    if !query.shouldLoadNextPage {
+                        return Signal.empty()
+                    }
+
+                    if query.searchText.isEmpty {
+                        return Signal.just(GitHubCommand.gitHubResponseReceived(.success((repositories: [], nextURL: nil))))
+                    }
+
+                    guard let nextURL = query.nextURL else {
+                        return Signal.empty()
+                    }
+
+                    return performSearch(nextURL)
+                        .asSignal(onErrorJustReturn: .failure(GitHubServiceError.networkError))
+                        .map(GitHubCommand.gitHubResponseReceived)
+                }
+
+                return effects(query)
+                    .asObservable()
+                    //.enqueue(state.scheduler)
+                    // observe on is here because results should be cancelable
+                    .observeOn(scheduler.async)
+                    // subscribe on is here because side-effects also need to be cancelable
+                    // (smooths out any glitches caused by start-cancel immediately)
+                    .subscribeOn(scheduler.async)
+            }
+            .asSignal(onErrorSignalWith: .empty())
+    }
 
     // this is degenerated feedback loop that doesn't depend on output state
-    let inputFeedbackLoop: (Driver<GitHubSearchRepositoriesState>) -> Signal<GitHubCommand> = { state in
+    let inputFeedbackLoop: (Observable<GitHubSearchRepositoriesState>) -> Signal<GitHubCommand> = { state in
         let loadNextPage = loadNextPageTrigger(state).map { _ in GitHubCommand.loadMoreItems }
         let searchText = searchText.map(GitHubCommand.changeSearch)
 
@@ -121,13 +141,28 @@ func githubSearchRepositories(
     // Create a system with two feedback loops that drive the system
     // * one that tries to load new pages when necessary
     // * one that sends commands from user input
-    return Driver.system(
-        initialState: GitHubSearchRepositoriesState.initial,
-        reduce: GitHubSearchRepositoriesState.reduce,
-        feedback: searchPerformerFeedback, inputFeedbackLoop
-    )
-}
+    let initialState = GitHubSearchRepositoriesState.initial
+    let reduce = GitHubSearchRepositoriesState.reduce
+    let feedbacks = [searchPerformerFeedback, inputFeedbackLoop]
 
+    let observableFeedbacks = feedbacks.map { f -> Observable<GitHubCommand> in
+        return f(replaySubject.asObservable()).asObservable()
+    }
+
+    return Observable.merge(observableFeedbacks)
+        .observeOn(CurrentThreadScheduler.instance)
+        .scan(initialState, accumulator: reduce)
+        .do(onNext: { output in
+            replaySubject.onNext(output)
+        }, onSubscribed: {
+            replaySubject.onNext(initialState)
+        })
+        //.subscribeOn(scheduler)
+        .startWith(initialState)
+        //.observeOn(scheduler)
+
+        .asDriver(onErrorDriveWith: .empty())
+}
 extension GitHubSearchRepositoriesState {
     var isOffline: Bool {
         guard let failure = self.failure else {
@@ -158,4 +193,15 @@ extension GitHubSearchRepositoriesState {
 
 extension GitHubSearchRepositoriesState: Mutable {
 
+}
+
+// MARK: ---
+
+extension ImmediateSchedulerType {
+    var async: ImmediateSchedulerType {
+        // This is a hack because of reentrancy. We need to make sure events are being sent async.
+        // In case MainScheduler is being used MainScheduler.asyncInstance is used to make sure state is modified async.
+        // If there is some unknown scheduler instance (like TestScheduler), just use it.
+        return (self as? MainScheduler).map { _ in MainScheduler.asyncInstance } ?? self
+    }
 }

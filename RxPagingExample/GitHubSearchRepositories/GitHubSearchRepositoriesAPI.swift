@@ -157,7 +157,7 @@ extension Repository {
                 let url = item["url"] as? String else {
                 throw exampleError("Can't parse repository")
             }
-            return Repository(name: name, url: try URL(string: url).unwrap())
+            return Repository(name: name, url: try URL(string: url)/*.unwrap()*/!)
         }
     }
 }

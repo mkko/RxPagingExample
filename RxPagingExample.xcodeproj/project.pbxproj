@@ -17,6 +17,14 @@
 		2B993A74214EE4FA00C587C0 /* GitHubSearchRepositoriesAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A6F214EE4FA00C587C0 /* GitHubSearchRepositoriesAPI.swift */; };
 		2B993A75214EE4FA00C587C0 /* GitHubSearchRepositoriesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A70214EE4FA00C587C0 /* GitHubSearchRepositoriesViewController.swift */; };
 		2B993A76214EE4FA00C587C0 /* UINavigationController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A71214EE4FA00C587C0 /* UINavigationController+Extensions.swift */; };
+		2B993A87214EECAE00C587C0 /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A84214EECAE00C587C0 /* Version.swift */; };
+		2B993A88214EECAE00C587C0 /* Lenses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A85214EECAE00C587C0 /* Lenses.swift */; };
+		2B993A89214EECAE00C587C0 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A86214EECAE00C587C0 /* Result.swift */; };
+		2B993A8B214EECE000C587C0 /* String+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A8A214EECE000C587C0 /* String+URL.swift */; };
+		2B993A8D214EECFF00C587C0 /* Example.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A8C214EECFF00C587C0 /* Example.swift */; };
+		2B993A8F214EEE7E00C587C0 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A8E214EEE7D00C587C0 /* Reachability.swift */; };
+		2B993A91214EEE8300C587C0 /* ReachabilityService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A90214EEE8300C587C0 /* ReachabilityService.swift */; };
+		2B993A93214EEEA400C587C0 /* Dependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A92214EEEA400C587C0 /* Dependencies.swift */; };
 		EC51860A3A0AE18B6BEB8C3C /* Pods_RxPagingExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4524C3DA72599B3CE1C4BE2A /* Pods_RxPagingExample.framework */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +41,14 @@
 		2B993A6F214EE4FA00C587C0 /* GitHubSearchRepositoriesAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GitHubSearchRepositoriesAPI.swift; sourceTree = "<group>"; };
 		2B993A70214EE4FA00C587C0 /* GitHubSearchRepositoriesViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GitHubSearchRepositoriesViewController.swift; sourceTree = "<group>"; };
 		2B993A71214EE4FA00C587C0 /* UINavigationController+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extensions.swift"; sourceTree = "<group>"; };
+		2B993A84214EECAE00C587C0 /* Version.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Version.swift; sourceTree = "<group>"; };
+		2B993A85214EECAE00C587C0 /* Lenses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lenses.swift; sourceTree = "<group>"; };
+		2B993A86214EECAE00C587C0 /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
+		2B993A8A214EECE000C587C0 /* String+URL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+URL.swift"; sourceTree = "<group>"; };
+		2B993A8C214EECFF00C587C0 /* Example.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example.swift; sourceTree = "<group>"; };
+		2B993A8E214EEE7D00C587C0 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
+		2B993A90214EEE8300C587C0 /* ReachabilityService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReachabilityService.swift; sourceTree = "<group>"; };
+		2B993A92214EEEA400C587C0 /* Dependencies.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dependencies.swift; sourceTree = "<group>"; };
 		4524C3DA72599B3CE1C4BE2A /* Pods_RxPagingExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RxPagingExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		50C09B332BF6B0B4391A75E0 /* Pods-RxPagingExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RxPagingExample.release.xcconfig"; path = "Pods/Target Support Files/Pods-RxPagingExample/Pods-RxPagingExample.release.xcconfig"; sourceTree = "<group>"; };
 		665D3D80C0476DC963806E6A /* Pods-RxPagingExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RxPagingExample.debug.xcconfig"; path = "Pods/Target Support Files/Pods-RxPagingExample/Pods-RxPagingExample.debug.xcconfig"; sourceTree = "<group>"; };
@@ -90,6 +106,14 @@
 				2B993A6F214EE4FA00C587C0 /* GitHubSearchRepositoriesAPI.swift */,
 				2B993A70214EE4FA00C587C0 /* GitHubSearchRepositoriesViewController.swift */,
 				2B993A71214EE4FA00C587C0 /* UINavigationController+Extensions.swift */,
+				2B993A86214EECAE00C587C0 /* Result.swift */,
+				2B993A92214EEEA400C587C0 /* Dependencies.swift */,
+				2B993A84214EECAE00C587C0 /* Version.swift */,
+				2B993A85214EECAE00C587C0 /* Lenses.swift */,
+				2B993A8C214EECFF00C587C0 /* Example.swift */,
+				2B993A8A214EECE000C587C0 /* String+URL.swift */,
+				2B993A8E214EEE7D00C587C0 /* Reachability.swift */,
+				2B993A90214EEE8300C587C0 /* ReachabilityService.swift */,
 			);
 			path = GitHubSearchRepositories;
 			sourceTree = "<group>";
@@ -226,10 +250,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2B993A93214EEEA400C587C0 /* Dependencies.swift in Sources */,
+				2B993A8B214EECE000C587C0 /* String+URL.swift in Sources */,
+				2B993A89214EECAE00C587C0 /* Result.swift in Sources */,
+				2B993A8F214EEE7E00C587C0 /* Reachability.swift in Sources */,
 				2B993A57214EA4A100C587C0 /* ViewController.swift in Sources */,
+				2B993A88214EECAE00C587C0 /* Lenses.swift in Sources */,
 				2B993A76214EE4FA00C587C0 /* UINavigationController+Extensions.swift in Sources */,
 				2B993A74214EE4FA00C587C0 /* GitHubSearchRepositoriesAPI.swift in Sources */,
+				2B993A8D214EECFF00C587C0 /* Example.swift in Sources */,
 				2B993A55214EA4A100C587C0 /* AppDelegate.swift in Sources */,
+				2B993A91214EEE8300C587C0 /* ReachabilityService.swift in Sources */,
+				2B993A87214EECAE00C587C0 /* Version.swift in Sources */,
 				2B993A75214EE4FA00C587C0 /* GitHubSearchRepositoriesViewController.swift in Sources */,
 				2B993A73214EE4FA00C587C0 /* GitHubSearchRepositories.swift in Sources */,
 			);
