@@ -16,14 +16,14 @@ struct GitHubSearchRepositoriesState {
     // control
     var searchText: String
     var shouldLoadNextPage: Bool
-    var repositories: Version<[Repository]> // Version is an optimization. When something unrelated changes, we don't want to reload table view.
+    var repositories: [Repository] // Version is an optimization. When something unrelated changes, we don't want to reload table view.
     var nextURL: URL?
     var failure: GitHubServiceError?
 
     init(searchText: String) {
         self.searchText = searchText
         shouldLoadNextPage = true
-        repositories = Version([])
+        repositories = []
         nextURL = URL(string: "https://api.github.com/search/repositories?q=\(searchText.URLEscaped)")
         failure = nil
     }
@@ -40,7 +40,7 @@ extension GitHubSearchRepositoriesState {
             switch result {
             case let .success((repositories, nextURL)):
                 return state.mutate {
-                    $0.repositories = Version($0.repositories.value + repositories)
+                    $0.repositories = $0.repositories + repositories
                     $0.shouldLoadNextPage = false
                     $0.nextURL = nextURL
                     $0.failure = nil
@@ -93,15 +93,11 @@ func githubSearchRepositories(
     let replaySubject = ReplaySubject<GitHubSearchRepositoriesState>.create(bufferSize: 1)
 
     let searchPerformerFeedback: (Driver<GitHubSearchRepositoriesState>) -> Signal<GitHubCommand> = { state in
-
-        return state.asObservable().map{ state in
+        return state.asObservable().map { state in
             GithubQuery(searchText: state.searchText, shouldLoadNextPage: state.shouldLoadNextPage, nextURL: state.nextURL)
             }
             .distinctUntilChanged()
-            .flatMapLatest { (query: GithubQuery?) -> Observable<GitHubCommand> in
-                guard let query = query else {
-                    return Observable<GitHubCommand>.empty()
-                }
+            .flatMapLatest { (query: GithubQuery) -> Observable<GitHubCommand> in
 
                 let effects: (GithubQuery) -> Signal<GitHubCommand> = { query in
                     if !query.shouldLoadNextPage {
@@ -166,6 +162,7 @@ func githubSearchRepositories(
 
         .asDriver(onErrorDriveWith: .empty())
 }
+
 extension GitHubSearchRepositoriesState {
     var isOffline: Bool {
         guard let failure = self.failure else {
@@ -207,4 +204,8 @@ extension ImmediateSchedulerType {
         // If there is some unknown scheduler instance (like TestScheduler), just use it.
         return (self as? MainScheduler).map { _ in MainScheduler.asyncInstance } ?? self
     }
+}
+
+func exampleError(_ error: String, location: String = "\(#file):\(#line)") -> NSError {
+    return NSError(domain: "ExampleError", code: -1, userInfo: [NSLocalizedDescriptionKey: "\(location): \(error)"])
 }

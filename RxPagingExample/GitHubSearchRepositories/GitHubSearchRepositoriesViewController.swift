@@ -66,14 +66,15 @@ class GitHubSearchRepositoriesViewController: ViewController, UITableViewDelegat
 
         state
             .map { $0.repositories }
-            .distinctUntilChanged()
-            .map { [SectionModel(model: "Repositories", items: $0.value)] }
+            //.distinctUntilChanged()
+            .map { [SectionModel(model: "Repositories", items: $0)] }
             .drive(tableView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
 
         tableView.rx.modelSelected(Repository.self)
             .subscribe(onNext: { repository in
-                UIApplication.shared.openURL(repository.url)
+                self.openURL(repository.url)
+                //UIApplication.shared.openURL(repository.url)
             })
             .disposed(by: disposeBag)
 
@@ -82,7 +83,7 @@ class GitHubSearchRepositoriesViewController: ViewController, UITableViewDelegat
             .distinctUntilChanged()
             .filter { $0 }
             .drive(onNext: { n in
-                showAlert("Exceeded limit of 10 non authenticated requests per minute for GitHub API. Please wait a minute. :(\nhttps://developer.github.com/v3/#rate-limiting") 
+                self.showAlert("Exceeded limit of 10 non authenticated requests per minute for GitHub API. Please wait a minute. :(\nhttps://developer.github.com/v3/#rate-limiting")
             })
             .disposed(by: disposeBag)
 
@@ -116,4 +117,15 @@ class GitHubSearchRepositoriesViewController: ViewController, UITableViewDelegat
         // I know, I know, this isn't a good place of truth, but it's no
         self.navigationController?.navigationBar.backgroundColor = nil
     }
+
+    func openURL(_ url: URL) {
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
+
+    func showAlert(_ message: String) {
+        let alert = UIAlertController(title: "RxExample", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
 }
+
