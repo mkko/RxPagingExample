@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B2B7938215A7432001A3AB7 /* RxPager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B2B7937215A7432001A3AB7 /* RxPager.swift */; };
 		2B993A55214EA4A100C587C0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A54214EA4A100C587C0 /* AppDelegate.swift */; };
 		2B993A57214EA4A100C587C0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A56214EA4A100C587C0 /* ViewController.swift */; };
 		2B993A5C214EA4A500C587C0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2B993A5B214EA4A500C587C0 /* Assets.xcassets */; };
@@ -28,6 +29,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2B2B7937215A7432001A3AB7 /* RxPager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxPager.swift; sourceTree = "<group>"; };
 		2B993A51214EA4A100C587C0 /* RxPagingExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RxPagingExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B993A54214EA4A100C587C0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2B993A56214EA4A100C587C0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 				2B993A8E214EEE7D00C587C0 /* Reachability.swift */,
 				2B993A90214EEE8300C587C0 /* ReachabilityService.swift */,
 				2B9B59E2215542EE00E8F35F /* ActivityIndicator.swift */,
+				2B2B7937215A7432001A3AB7 /* RxPager.swift */,
 			);
 			path = GitHubSearchRepositories;
 			sourceTree = "<group>";
@@ -260,6 +263,7 @@
 				2B993A76214EE4FA00C587C0 /* UINavigationController+Extensions.swift in Sources */,
 				2B993A74214EE4FA00C587C0 /* GitHubSearchRepositoriesAPI.swift in Sources */,
 				2B993A55214EA4A100C587C0 /* AppDelegate.swift in Sources */,
+				2B2B7938215A7432001A3AB7 /* RxPager.swift in Sources */,
 				2B993A91214EEE8300C587C0 /* ReachabilityService.swift in Sources */,
 				2B993A87214EECAE00C587C0 /* Version.swift in Sources */,
 				2B993A75214EE4FA00C587C0 /* GitHubSearchRepositoriesViewController.swift in Sources */,
