@@ -56,7 +56,77 @@ class GitHubSearchRepositoriesViewController: ViewController, UITableViewDelegat
 
         let searchBar: UISearchBar = self.searchBar
 
-        let state = githubSearchRepositories(
+//        let state: Driver<GitHubSearchRepositoriesState> = Observable.paged(
+//            load:
+//        )
+
+        let search = searchBar.rx.text.orEmpty.changed
+            .asObservable()
+            .throttle(0.3, scheduler: MainScheduler.instance)
+            .distinctUntilChanged()
+//            .map { GitHubSearchRepositoriesState(searchText: $0) }
+
+        let trigger = tableView.rx.contentOffset.asObservable()
+            .flatMap { state in
+                return tableView.isNearBottomEdge(edgeOffset: 20.0)
+                    ? Signal.just(())
+                    : Signal.empty()
+        }
+
+//        let s1 = search.
+//            combine(
+//                page: { (search, state) -> Observable<GitHubSearchRepositoriesState> in
+//
+//                }
+//        )
+
+        // CONS: State gets reset on new search
+        let state = search
+            .mapWithPages(page: { (search, state) -> Observable<GitHubSearchRepositoriesState> in
+                let state = state ?? GitHubSearchRepositoriesState(searchText: search)
+
+                guard let nextURL = state.nextURL else {
+                    return Observable.just(state)
+                }
+
+                return GitHubSearchRepositoriesAPI.sharedAPI.loadSearchURL(nextURL)
+                    .trackActivity(activityIndicator)
+                    //.asSignal(onErrorJustReturn: .failure(GitHubServiceError.networkError))
+                    //.map(GitHubCommand.gitHubResponseReceived)
+                    .map { result -> GitHubSearchRepositoriesState in
+                        switch result {
+                        case let .success((repositories, nextURL)):
+                            return state.mutate {
+                                $0.repositories = $0.repositories + repositories
+                                $0.shouldLoadNextPage = false
+                                $0.nextURL = nextURL
+                                $0.failure = nil
+                            }
+                        case let .failure(error):
+                            return state.mutateOne { $0.failure = error }
+                        }
+                    }
+
+                return Observable.just(GitHubSearchRepositoriesState(searchText: ""))
+            }, while: { (s) -> Bool in
+                return true
+            }, when: trigger)
+            .asDriver(onErrorDriveWith: .empty())
+
+        let state_ = Observable<GitHubSearchRepositoriesState>.page(
+            make: { (state) -> Observable<GitHubSearchRepositoriesState> in
+                print("page")
+                //return state ?? GitHubSearchRepositoriesState(searchText: "")
+                return Observable.just(GitHubSearchRepositoriesState(searchText: ""))
+        },
+            while: { (state) -> Bool in
+                true
+        },
+            when: trigger)
+            .asDriver(onErrorDriveWith: .empty())
+
+
+        let state__: Driver<GitHubSearchRepositoriesState> = githubSearchRepositories(
             searchText: searchBar.rx.text.orEmpty.changed.asSignal().throttle(0.3),
             loadNextPageTrigger: loadNextPageTrigger,
             performSearch: { URL in
@@ -129,3 +199,40 @@ class GitHubSearchRepositoriesViewController: ViewController, UITableViewDelegat
     }
 }
 
+extension ObservableType {
+
+    public func mapWithPages<State>(page nextPage: @escaping (E, State?) -> Observable<State>,
+                         while hasNext: @escaping (State) -> Bool,
+                         when trigger: Observable<Void>) -> Observable<State> {
+
+        let scheduler = MainScheduler()
+        let replaySubject = ReplaySubject<(E, State?)>.create(bufferSize: 1)
+
+        let inputFeedbackLoop = replaySubject
+            .flatMapLatest { (query, state) -> Observable<State> in
+                let r: Observable<State>
+                if let state = state {
+                    r = trigger.flatMap {
+                        nextPage(query, state)
+                    }
+                } else {
+                    r = nextPage(query, nil)
+                }
+                return r
+                    // observe on is here because results should be cancelable
+                    .observeOn(scheduler.async)
+                    // subscribe on is here because side-effects also need to be cancelable
+                    // (smooths out any glitches caused by start-cancel immediately)
+                    .subscribeOn(scheduler.async)
+        }
+
+        return self.flatMapLatest { (query) -> Observable<State> in
+            return inputFeedbackLoop
+                .do(onNext: { state in
+                    replaySubject.onNext((query, state))
+                }, onSubscribed: {
+                    replaySubject.onNext((query, nil))
+                })
+        }
+    }
+}

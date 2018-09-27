@@ -111,7 +111,6 @@ func githubSearchRepositories(
 
                 return effects(query)
                     .asObservable()
-                    //.enqueue(state.scheduler)
                     // observe on is here because results should be cancelable
                     .observeOn(scheduler.async)
                     // subscribe on is here because side-effects also need to be cancelable
