@@ -17,6 +17,8 @@ extension UIScrollView {
     }
 }
 
+typealias Query = String
+
 class GitHubSearchRepositoriesViewController: ViewController, UITableViewDelegate {
     static let startLoadingOffset: CGFloat = 20.0
 
@@ -38,101 +40,29 @@ class GitHubSearchRepositoriesViewController: ViewController, UITableViewDelegat
         }
     )
 
+    let activityIndicator = ActivityIndicator()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let tableView: UITableView = self.tableView
-        let loadNextPageTrigger: (Driver<GitHubSearchRepositoriesState>) -> Signal<()> =  { state in
-            tableView.rx.contentOffset.asDriver()
-                .withLatestFrom(state)
-                .flatMap { state in
-                    return tableView.isNearBottomEdge(edgeOffset: 20.0) && !state.shouldLoadNextPage
-                        ? Signal.just(())
-                        : Signal.empty()
-            }
-        }
-
-        let activityIndicator = ActivityIndicator()
-
-        let searchBar: UISearchBar = self.searchBar
-
-//        let state: Driver<GitHubSearchRepositoriesState> = Observable.paged(
-//            load:
-//        )
 
         let search = searchBar.rx.text.orEmpty.changed
             .asObservable()
             .throttle(0.3, scheduler: MainScheduler.instance)
             .distinctUntilChanged()
-//            .map { GitHubSearchRepositoriesState(searchText: $0) }
 
         let trigger = tableView.rx.contentOffset.asObservable()
             .flatMap { state in
-                return tableView.isNearBottomEdge(edgeOffset: 20.0)
+                return self.tableView.isNearBottomEdge(edgeOffset: 20.0)
                     ? Signal.just(())
                     : Signal.empty()
         }
 
-//        let s1 = search.
-//            combine(
-//                page: { (search, state) -> Observable<GitHubSearchRepositoriesState> in
-//
-//                }
-//        )
-
         // CONS: State gets reset on new search
         let state = search
-            .mapWithPages(page: { (search, state) -> Observable<GitHubSearchRepositoriesState> in
-                let state = state ?? GitHubSearchRepositoriesState(searchText: search)
-
-                guard let nextURL = state.nextURL else {
-                    return Observable.just(state)
-                }
-
-                return GitHubSearchRepositoriesAPI.sharedAPI.loadSearchURL(nextURL)
-                    .trackActivity(activityIndicator)
-                    //.asSignal(onErrorJustReturn: .failure(GitHubServiceError.networkError))
-                    //.map(GitHubCommand.gitHubResponseReceived)
-                    .map { result -> GitHubSearchRepositoriesState in
-                        switch result {
-                        case let .success((repositories, nextURL)):
-                            return state.mutate {
-                                $0.repositories = $0.repositories + repositories
-                                $0.shouldLoadNextPage = false
-                                $0.nextURL = nextURL
-                                $0.failure = nil
-                            }
-                        case let .failure(error):
-                            return state.mutateOne { $0.failure = error }
-                        }
-                    }
-
-                return Observable.just(GitHubSearchRepositoriesState(searchText: ""))
-            }, while: { (s) -> Bool in
+            .mapWithPages(page: self.search, while: { (s) -> Bool in
                 return true
             }, when: trigger)
             .asDriver(onErrorDriveWith: .empty())
-
-        let state_ = Observable<GitHubSearchRepositoriesState>.page(
-            make: { (state) -> Observable<GitHubSearchRepositoriesState> in
-                print("page")
-                //return state ?? GitHubSearchRepositoriesState(searchText: "")
-                return Observable.just(GitHubSearchRepositoriesState(searchText: ""))
-        },
-            while: { (state) -> Bool in
-                true
-        },
-            when: trigger)
-            .asDriver(onErrorDriveWith: .empty())
-
-
-        let state__: Driver<GitHubSearchRepositoriesState> = githubSearchRepositories(
-            searchText: searchBar.rx.text.orEmpty.changed.asSignal().throttle(0.3),
-            loadNextPageTrigger: loadNextPageTrigger,
-            performSearch: { URL in
-                GitHubSearchRepositoriesAPI.sharedAPI.loadSearchURL(URL)
-                    .trackActivity(activityIndicator)
-            })
 
         state
             .map { $0.repositories }
@@ -159,8 +89,8 @@ class GitHubSearchRepositoriesViewController: ViewController, UITableViewDelegat
 
         tableView.rx.contentOffset
             .subscribe { _ in
-                if searchBar.isFirstResponder {
-                    _ = searchBar.resignFirstResponder()
+                if self.searchBar.isFirstResponder {
+                    _ = self.searchBar.resignFirstResponder()
                 }
             }
             .disposed(by: disposeBag)
@@ -186,6 +116,32 @@ class GitHubSearchRepositoriesViewController: ViewController, UITableViewDelegat
     deinit {
         // I know, I know, this isn't a good place of truth, but it's no
         self.navigationController?.navigationBar.backgroundColor = nil
+    }
+
+    func search(query: Query, state: GitHubSearchRepositoriesState?) -> Observable<GitHubSearchRepositoriesState> {
+        let state = state ?? GitHubSearchRepositoriesState(searchText: query)
+
+        guard let nextURL = state.nextURL else {
+            return Observable.just(state)
+        }
+
+        return GitHubSearchRepositoriesAPI.sharedAPI.loadSearchURL(nextURL)
+            .trackActivity(activityIndicator)
+            //.asSignal(onErrorJustReturn: .failure(GitHubServiceError.networkError))
+            //.map(GitHubCommand.gitHubResponseReceived)
+            .map { result -> GitHubSearchRepositoriesState in
+                switch result {
+                case let .success((repositories, nextURL)):
+                    return state.mutate {
+                        $0.repositories = $0.repositories + repositories
+                        $0.shouldLoadNextPage = false
+                        $0.nextURL = nextURL
+                        $0.failure = nil
+                    }
+                case let .failure(error):
+                    return state.mutateOne { $0.failure = error }
+                }
+        }
     }
 
     func openURL(_ url: URL) {
