@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2B2B7938215A7432001A3AB7 /* RxPager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B2B7937215A7432001A3AB7 /* RxPager.swift */; };
+		2B88CB95215ED61800B88498 /* ObservableType+Paging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B88CB94215ED61800B88498 /* ObservableType+Paging.swift */; };
 		2B993A55214EA4A100C587C0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A54214EA4A100C587C0 /* AppDelegate.swift */; };
 		2B993A57214EA4A100C587C0 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B993A56214EA4A100C587C0 /* ViewController.swift */; };
 		2B993A5C214EA4A500C587C0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2B993A5B214EA4A500C587C0 /* Assets.xcassets */; };
@@ -30,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		2B2B7937215A7432001A3AB7 /* RxPager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxPager.swift; sourceTree = "<group>"; };
+		2B88CB94215ED61800B88498 /* ObservableType+Paging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ObservableType+Paging.swift"; sourceTree = "<group>"; };
 		2B993A51214EA4A100C587C0 /* RxPagingExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RxPagingExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B993A54214EA4A100C587C0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2B993A56214EA4A100C587C0 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -90,6 +92,7 @@
 				2B993A66214EDF1F00C587C0 /* GitHubSearchRepositories */,
 				2B993A54214EA4A100C587C0 /* AppDelegate.swift */,
 				2B993A56214EA4A100C587C0 /* ViewController.swift */,
+				2B88CB94215ED61800B88498 /* ObservableType+Paging.swift */,
 				2B993A6D214EE4F900C587C0 /* Main.storyboard */,
 				2B993A5B214EA4A500C587C0 /* Assets.xcassets */,
 				2B993A5D214EA4A500C587C0 /* LaunchScreen.storyboard */,
@@ -267,6 +270,7 @@
 				2B993A91214EEE8300C587C0 /* ReachabilityService.swift in Sources */,
 				2B993A87214EECAE00C587C0 /* Version.swift in Sources */,
 				2B993A75214EE4FA00C587C0 /* GitHubSearchRepositoriesViewController.swift in Sources */,
+				2B88CB95215ED61800B88498 /* ObservableType+Paging.swift in Sources */,
 				2B993A73214EE4FA00C587C0 /* GitHubSearchRepositories.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
